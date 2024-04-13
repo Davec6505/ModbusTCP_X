@@ -152,9 +152,9 @@ extern "C" {
 ////////////////////////////////////////////////////
 //globals
     typedef struct{
-    unsigned short mb_bits[4];
+    uint8_t mb_bits[4];
     float wr_floats[10];
-    int xyz_vals[19];
+    int16_t xyz_vals[19];
     }GLOBAL_VARS;
     extern volatile GLOBAL_VARS gvars;
     
@@ -673,8 +673,53 @@ uint16_t get_Var(uint16_t offset);
             return 3;
         }
      */
-uint8_t get_Bits(uint16_t offset);
+uint8_t set_Bits(uint8_t bits,uint16_t offset);
 
+    // *****************************************************************************
+    /**
+      @Function
+       void Modbus_Configure(void)
+
+      @Summary
+        Initialize common data used by Modbus.
+
+      @Description
+        Full description, explaining the purpose and usage of the function.
+        <p>
+        Additional description in consecutive paragraphs separated by HTML 
+        paragraph breaks, as necessary.
+        <p>
+        Type "JavaDoc" in the "How Do I?" IDE toolbar for more information on tags.
+
+      @Precondition
+        List and describe any required preconditions. If there are no preconditions,
+        enter "None."
+
+      @Parameters
+        @param param1 Describe the first parameter to the function.
+    
+        @param param2 Describe the second parameter to the function.
+
+      @Returns
+        List (if feasible) and describe the return values of the function.
+        <ul>
+          <li>1   Indicates an error occurred
+          <li>0   Indicates an error did not occur
+        </ul>
+
+      @Remarks
+        Describe any special behavior not described above.
+        <p>
+        Any additional remarks.
+
+      @Example
+        @code
+        if(ExampleFunctionName(1, 2) == 0)
+        {
+            return 3;
+        }
+     */
+uint8_t get_Bits(uint16_t offset);
     // *****************************************************************************
     /**
       @Function

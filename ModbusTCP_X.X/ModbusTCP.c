@@ -520,6 +520,10 @@ uint8_t get_Bits(uint16_t offset){
   return regs.wr_coils[offset];
 }
 
+uint8_t set_Bits(uint8_t bits,uint16_t offset){
+    memset(regs.wr_coils+offset, bits,sizeof(uint8_t));
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //sets modbus registers with a float value to return on request
 void set_Float(uint16_t offset,float flt){
