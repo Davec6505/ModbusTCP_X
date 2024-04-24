@@ -40,17 +40,22 @@ extern "C" {
 #endif
 
 
-    /* ************************************************************************** */
-    /* ************************************************************************** */
-    /* Section: Constants                                                         */
-    /* ************************************************************************** */
-    /* ************************************************************************** */
-
+    /* ************************************************************************** 
+       ************************************************************************** 
+       * Section: Macros                                                        
+       ************************************************************************** 
+       ************************************************************************** */
+#define DEC(b) "%." #b "f"
+#define CONC(a) DEC(a)
+    
+    
 #define reverse(a,b) ((a<<8)|b)
 #define Lo(a) ((a)& (0xFF)
 #define Hi(a) ((a>>8)&0xFF)
 #define LoWord(a) ((a)&0xFFFF)
 #define HiWord(a) ((a>>16)&0xFFFF)
+    
+    
     /* ************************************************************************** */
     /** Descriptive Constant Name
 
@@ -136,10 +141,10 @@ extern "C" {
 
 //offsets
 #define SETUP        0
-#define TEXT         23    //40 characters to display on screen     1byte
-#define IVAR         63    //10 Holding registers                   2bytes
-#define WFVAR        83    // 2 write floating point regesters      4bytes
-#define RFVAR        91    // 2 read only floating point registers  4bytes
+#define TEXT         30    //40 characters to display on screen     1byte
+#define IVAR         60    //10 Holding registers                   2bytes
+#define WFVAR        80    // 2 write floating point regesters      4bytes
+#define RFVAR        90    // 2 read only floating point registers  4bytes
     
     
     // *****************************************************************************

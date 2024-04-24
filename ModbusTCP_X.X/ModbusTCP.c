@@ -29,6 +29,9 @@ volatile GLOBAL_VARS gvars;
 //returns the value of the required buffer
 unsigned int get_ResponseValue(ModbusTCP *pdu);
 unsigned long long lookup_mask(int val);
+void set_float_chars(void* args,float flt);
+
+
 
 void Modbus_Configure(){
 int i=0,j=0,k=0;
@@ -507,9 +510,19 @@ static float flt = 0.0;
           //regs.wr_reg[offset] = 39322;regs.wr_reg[offset+1] = 17138;
           flt = _ConvX2Float(regs.wr_reg[offset+1],regs.wr_reg[offset]);
           gvars.wr_floats[offset - WFVAR] = flt;
-          sprintf((char*)args,"%08.3f",flt);
+          set_float_chars(args,flt);
+          //sprintf((char*)args,DEC(),flt);
           break;
   }
+}
+
+void set_float_chars(void* args,float flt){    
+    if(gvars.xyz_vals[19] == 1)
+      sprintf((char*)args,DEC(1),flt);
+    else if(gvars.xyz_vals[19] == 3)
+      sprintf((char*)args,DEC(3),flt);
+    else
+      sprintf((char*)args,DEC(2),flt);   
 }
 
 uint16_t get_Var(uint16_t offset){
