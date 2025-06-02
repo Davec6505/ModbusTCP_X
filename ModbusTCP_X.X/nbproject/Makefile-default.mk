@@ -101,18 +101,18 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/ModbusTCP.o: ModbusTCP.c  .generated_files/flags/default/396e3cdcee09a58c3d4fea7e051b14a113ec75c1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/ModbusTCP.o: ModbusTCP.c  .generated_files/flags/default/74aca7fd0d5e5a28d4f9a45f8a2750e3d2b4631 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/ModbusTCP.o.d 
 	@${RM} ${OBJECTDIR}/ModbusTCP.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/ModbusTCP.o.d" -o ${OBJECTDIR}/ModbusTCP.o ModbusTCP.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Wall -MP -MMD -MF "${OBJECTDIR}/ModbusTCP.o.d" -o ${OBJECTDIR}/ModbusTCP.o ModbusTCP.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 else
-${OBJECTDIR}/ModbusTCP.o: ModbusTCP.c  .generated_files/flags/default/37d6afc90eda8b03cadec94c396434895bba8166 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/ModbusTCP.o: ModbusTCP.c  .generated_files/flags/default/adcb0c7f43ce062a8f71b1982907cd234c952010 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/ModbusTCP.o.d 
 	@${RM} ${OBJECTDIR}/ModbusTCP.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/ModbusTCP.o.d" -o ${OBJECTDIR}/ModbusTCP.o ModbusTCP.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Wall -MP -MMD -MF "${OBJECTDIR}/ModbusTCP.o.d" -o ${OBJECTDIR}/ModbusTCP.o ModbusTCP.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 

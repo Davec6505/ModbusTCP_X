@@ -50,7 +50,7 @@ extern "C" {
     
     
 #define reverse(a,b) ((a<<8)|b)
-#define Lo(a) ((a)& (0xFF)
+#define Lo(a) ((a)& 0xFF)
 #define Hi(a) ((a>>8)&0xFF)
 #define LoWord(a) ((a)&0xFFFF)
 #define HiWord(a) ((a>>16)&0xFFFF)
@@ -159,7 +159,8 @@ extern "C" {
     typedef struct{
     uint8_t mb_bits[4];
     float wr_floats[10];
-    int16_t xyz_vals[19];
+    int16_t wr_ints[10];
+    int16_t xyz_vals[TEXT];
     }GLOBAL_VARS;
     extern volatile GLOBAL_VARS gvars;
     
@@ -218,7 +219,7 @@ extern "C" {
     typedef struct{
      MBAP mbap;
      PDU pdu;
-     unsigned short error;
+     uint8_t error;
     }__attribute__((packed))ModbusTCP;
 
  
@@ -634,21 +635,17 @@ void get_Data(uint16_t offset,void* args);
      */
 uint16_t get_Var(uint16_t offset);
 
+
     // *****************************************************************************
     /**
       @Function
-       void Modbus_Configure(void)
+       void set_Var(uint16_t offset, int16_t value)
 
       @Summary
-        Initialize common data used by Modbus.
+        Set data used by Modbus register.
 
       @Description
-        Full description, explaining the purpose and usage of the function.
-        <p>
-        Additional description in consecutive paragraphs separated by HTML 
-        paragraph breaks, as necessary.
-        <p>
-        Type "JavaDoc" in the "How Do I?" IDE toolbar for more information on tags.
+     Set data at modbus register with an offset 
 
       @Precondition
         List and describe any required preconditions. If there are no preconditions,
@@ -674,6 +671,37 @@ uint16_t get_Var(uint16_t offset);
       @Example
         @code
         if(ExampleFunctionName(1, 2) == 0)
+        {
+            return 3;
+        }
+     */
+void set_Var(uint16_t offset, int16_t value);
+    // *****************************************************************************
+    /**
+      @Function
+       uint8_t set_Bits(uint8_t,uint16_t)
+
+      @Summary
+        Set control bit at offset.
+
+      @Description
+       Used to set control register bits at FC 01, in this case it is used to set 
+     * RGB screen context bits.
+
+
+      @Parameters
+        @param bits value 2 = 0b00000011.
+    
+        @param offset the position of the byte in the working register array.
+
+      @Returns
+
+     * returns void for now
+
+      @Example
+        @code
+     uint8_t reg;
+        if(set_Bits(bit_value, reg_ofset) == 0)
         {
             return 3;
         }
@@ -771,6 +799,10 @@ uint8_t get_Bits(uint16_t offset);
      */
 void set_Float(uint16_t offset,float flt);
 
+uint16_t get_Decimal(void);
+
+void set_Decimal(uint16_t value);
+
    // *****************************************************************************
     /**
       @Function
@@ -816,6 +848,22 @@ void set_Float(uint16_t offset,float flt);
         }
      */
 uint16_t modbus_DataConditioning(uint8_t *mbArr,uint16_t data_len);
+
+
+ // ****************************************************************************
+ /*
+  *  getter and setter to inform modbus connected 
+  */
+void modbus_connect_set(int8_t value);
+int8_t modbus_connect_get( void );
+
+// *****************************************************************************
+/*
+ * getter and setter to inform web control
+ */
+void web_control_set(int8_t value);
+int8_t web_control_get(void);
+
     /* Provide C++ Compatibility */
 #ifdef __cplusplus
 }

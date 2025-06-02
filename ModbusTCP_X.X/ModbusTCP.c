@@ -23,7 +23,10 @@ const char SERIAL_NUMBER[] = "1111" ;
 ////////////////////////////////////////////////////////////////////////////////
 //global variable
 volatile GLOBAL_VARS gvars;
- 
+static uint16_t decimal; 
+static int8_t connection_status;
+static int8_t web_control;
+
 ////////////////////////////////////////////////////////////////////////////////
 //local functions
 //returns the value of the required buffer
@@ -42,7 +45,6 @@ CONV_INT ui2c;
      regs.rd_reg[i] = ui2c.valUI;
      j = 0;
   }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +115,7 @@ uint16_t bit_bytequantity,
              bit_startbyte,
              bit_modulo;
 int16_t i,j,temp,len;
-uint8_t tempA[20] = {0};
+uint8_t tempA[40] = {0};
 CONV_INT ui2c;
 CONV_LONG l2c;
 ModbusTCP *pdu = _pdu;
@@ -503,6 +505,7 @@ static float flt = 0.0;
           break;
      case IVAR:    case(IVAR+1):case (IVAR+2):case (IVAR+3):case (IVAR+4):
      case (IVAR+5):case(IVAR+6):case (IVAR+7):case (IVAR+8):case (IVAR+9):
+          gvars.wr_ints[offset-IVAR] = regs.wr_reg[offset];
           sprintf((char*)args,"%d",regs.wr_reg[offset]);
           break;
      case WFVAR:case (WFVAR+2):case (WFVAR+4):case (WFVAR+8):
@@ -517,9 +520,9 @@ static float flt = 0.0;
 }
 
 void set_float_chars(void* args,float flt){    
-    if(gvars.xyz_vals[19] == 1)
+    if(decimal == 1)
       sprintf((char*)args,DEC(1),flt);
-    else if(gvars.xyz_vals[19] == 3)
+    else if(decimal == 3)
       sprintf((char*)args,DEC(3),flt);
     else
       sprintf((char*)args,DEC(2),flt);   
@@ -527,6 +530,10 @@ void set_float_chars(void* args,float flt){
 
 uint16_t get_Var(uint16_t offset){
   return regs.wr_reg[offset];
+}
+
+void set_Var(uint16_t offset, int16_t value){
+   regs.wr_reg[offset] = value;   
 }
 
 uint8_t get_Bits(uint16_t offset){
@@ -629,3 +636,39 @@ uint16_t modbus_DataConditioning(uint8_t *mbArr,uint16_t data_len){
    return 0; // return to the library with the number of bytes to transmit
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//get the decimal place format specifier
+uint16_t get_Decimal(void){
+    return decimal;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//set the decimal place format specifier
+void set_Decimal(uint16_t value){
+    if(value > 3)
+        value = 3;
+    
+    decimal = value;   
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//provides a way of setting an external bit to indicate status of socket
+void modbus_connect_set(int8_t value){
+    connection_status = value;
+}
+
+int8_t modbus_connect_get(void){
+    return connection_status;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//provides a way to inform the app that web is using modbus registers
+void web_control_set(int8_t value){
+    web_control = value;
+}
+
+int8_t web_control_get(void){
+    return web_control;
+}
