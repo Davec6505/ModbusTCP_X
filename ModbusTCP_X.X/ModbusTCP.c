@@ -396,7 +396,7 @@ float valFA=0.0,valFB = 0.0,valFC = 0.0,j=0.0;
    return valFB;
 }
 
-//standard implimentation of IEEE 745 float max value ? 3.4028235 × 10^38.
+//standard implimentation of IEEE 745 float max value ? 3.4028235 ï¿½ 10^38.
 //~340282380.0  at this length the decimal place is lost and thus precision
 //after decimal place no longer applies. the precision after the deicmal
 //place is rounded and succeptible to loss in precision.
@@ -542,6 +542,7 @@ uint8_t get_Bits(uint16_t offset){
 
 uint8_t set_Bits(uint8_t bits,uint16_t offset){
     memset(regs.wr_coils+offset, bits,sizeof(uint8_t));
+  return regs.wr_coils[offset];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
