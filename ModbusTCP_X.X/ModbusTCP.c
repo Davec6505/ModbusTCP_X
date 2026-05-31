@@ -489,20 +489,23 @@ long k=0;
 //parse char data as offsets from a modbus recieve / request instruction
 void get_Data(uint16_t offset,void *args){
 CONV_FLOAT l2f;
-volatile char str[30];
-int i,j,k;
+int i;
 static unsigned long tempL = 0;
 static float flt = 0.0;
 
   switch(offset){
      case TEXT:
-          //test {18533,27756,28416}
-          for(i=0,j=0;i<15;i++){
-              *((char*)args++) = (regs.wr_reg[offset+i]>>8);
-              *((char*)args++) = regs.wr_reg[offset+i];
-              //args+=2;
-          }
+      {
+        // TEXT is carried in register pairs; unpack up to 60 bytes.
+        char *dst = (char*)args;
+        for(i = 0; i < 30; i++){
+          dst[(i * 2) + 0] = (char)(regs.wr_reg[offset+i] >> 8);
+          dst[(i * 2) + 1] = (char)(regs.wr_reg[offset+i] & 0xFF);
+        }
+        // Guarantee C-string termination for render paths that expect NUL.
+        dst[59] = '\0';
           break;
+      }
      case IVAR:    case(IVAR+1):case (IVAR+2):case (IVAR+3):case (IVAR+4):
      case (IVAR+5):case(IVAR+6):case (IVAR+7):case (IVAR+8):case (IVAR+9):
           gvars.wr_ints[offset-IVAR] = regs.wr_reg[offset];
