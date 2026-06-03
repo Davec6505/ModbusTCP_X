@@ -152,21 +152,30 @@ ModbusTCP *pdu = _pdu;
          len = bit_bytequantity;
          break;
      case O3:case O4:
-         for(i=pdu->pdu.StartingAddr;i<(pdu->pdu.StartingAddr+pdu->pdu.RegQuantity);i++){
-            ui2c.valUI = (pdu->mbap.FC == O3)? regs.wr_reg[i]:regs.rd_reg[i];
-            *(resp+(j++)) = ui2c.valC[1];
-            *(resp+(j++)) = ui2c.valC[0];
+         {
+             /* Guard: clamp read range to within the register array bounds. */
+             uint16_t reg_max = (uint16_t)(sizeof(regs.wr_reg)/sizeof(regs.wr_reg[0]));
+             uint16_t end_reg = pdu->pdu.StartingAddr + pdu->pdu.RegQuantity;
+             if(end_reg > reg_max) end_reg = reg_max;
+             for(i=pdu->pdu.StartingAddr;i<end_reg;i++){
+                ui2c.valUI = (pdu->mbap.FC == O3)? regs.wr_reg[i]:regs.rd_reg[i];
+                *(resp+(j++)) = ui2c.valC[1];
+                *(resp+(j++)) = ui2c.valC[0];
+             }
+             len = j;
          }
-         len = j;
          break;
      case O5:
          bit_startaddress = pdu->pdu.StartingAddr / 8;
          bit_modulo = pdu->pdu.StartingAddr % 8;
-         //0xFF is coils on 0x00 = coil off
-         if(pdu->pdu.RegQuantity == 0xFF00)
-            regs.wr_coils[bit_startaddress] |= (1<<bit_modulo);
-         else
-            regs.wr_coils[bit_startaddress] &= ~(1<<bit_modulo);
+         /* Guard: coil address must be within wr_coils[200]. */
+         if(bit_startaddress < sizeof(regs.wr_coils)){
+             //0xFF is coils on 0x00 = coil off
+             if(pdu->pdu.RegQuantity == 0xFF00)
+                regs.wr_coils[bit_startaddress] |= (1<<bit_modulo);
+             else
+                regs.wr_coils[bit_startaddress] &= ~(1<<bit_modulo);
+         }
          len = 0;
          break;
       case O6:
@@ -183,8 +192,9 @@ ModbusTCP *pdu = _pdu;
          break;
      case O16:
        j=pdu->pdu.StartingAddr;
-       
+       /* Guard: clamp writes to within the wr_reg[100] array. */
        for(i=0;i<(pdu->pdu.RegQuantity*2);i++,j++){
+           if(j >= (sizeof(regs.wr_reg)/sizeof(regs.wr_reg[0]))) break;
            temp = resp[i] & 0xFF;
            temp <<= 8;
            temp |= resp[++i];
@@ -610,10 +620,12 @@ uint16_t modbus_DataConditioning(uint8_t *mbArr,uint16_t data_len){
       if (pdu->error == MB_OK) {
           
         if(pdu->mbap.FC != O5 & pdu->mbap.FC != O6){
-            memcpy(reg,mbArr+len,(pdu->pdu.RegQuantity*2));
-          /*for(i=0 ; i < pdu->pdu.RegQuantity*2; i++) {
-            reg[i] = mbArr[len+i] ;
-          }*/
+            /* Guard: RegQuantity comes from the network — clamp before copying
+             * into the fixed 256-byte reg[] stack buffer. Each register is
+             * 2 bytes, and wr_reg[] is 100 entries (200 bytes), so cap at 128. */
+            uint16_t copy_bytes = pdu->pdu.RegQuantity * 2u;
+            if(copy_bytes > sizeof(reg)) copy_bytes = sizeof(reg);
+            memcpy(reg, mbArr+len, copy_bytes);
         }
         
         last_len = set_Data(pdu,reg);
