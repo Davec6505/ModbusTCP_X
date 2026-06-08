@@ -676,6 +676,10 @@ uint16_t get_Var(uint16_t offset);
         }
      */
 void set_Var(uint16_t offset, int16_t value);
+// Write a value directly into a read-only (rd_reg) Modbus input register.
+// Use for device-identity data such as firmware version that the PLC reads
+// but never writes. offset is the absolute register index (0-99).
+void set_ReadReg(uint16_t offset, uint16_t value);
     // *****************************************************************************
     /**
       @Function

@@ -553,6 +553,12 @@ void set_Var(uint16_t offset, int16_t value){
    regs.wr_reg[offset] = value;   
 }
 
+void set_ReadReg(uint16_t offset, uint16_t value){
+   if(offset < 100u){
+       regs.rd_reg[offset] = value;
+   }
+}
+
 uint8_t get_Bits(uint16_t offset){
   return regs.wr_coils[offset];
 }
