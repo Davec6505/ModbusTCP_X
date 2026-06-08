@@ -576,7 +576,6 @@ uint16_t modbus_DataConditioning(uint8_t *mbArr,uint16_t data_len){
  ModbusTCP *pdu = &modbus;
  uint8_t prefix[15] = {0}; 
  uint8_t reg[256] = {0};
- uint8_t err = 0;
  uint16_t i;
  static uint16_t last_len = 0,len = 0; 
       //something wrong with socket
