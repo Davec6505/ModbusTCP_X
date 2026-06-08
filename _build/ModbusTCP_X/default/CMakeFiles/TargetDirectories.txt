@@ -1,0 +1,4 @@
+C:/Users/davec/GIT/ModbusTCP_X/_build/ModbusTCP_X/default/CMakeFiles/ModbusTCP_X_default_default_XC32_compile.dir
+C:/Users/davec/GIT/ModbusTCP_X/_build/ModbusTCP_X/default/CMakeFiles/ModbusTCP_X_default_image_UCbtPTJB.dir
+C:/Users/davec/GIT/ModbusTCP_X/_build/ModbusTCP_X/default/CMakeFiles/edit_cache.dir
+C:/Users/davec/GIT/ModbusTCP_X/_build/ModbusTCP_X/default/CMakeFiles/rebuild_cache.dir

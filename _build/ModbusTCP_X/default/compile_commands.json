@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/davec/GIT/ModbusTCP_X/_build/ModbusTCP_X/default",
+  "command": "c:\\PROGRA~1\\MICROC~1\\xc32\\v5.00\\bin\\xc32-gcc.exe -DXPRJ_default=default -D__DEBUG -IC:/Users/davec/GIT/ModbusTCP_X/cmake/ModbusTCP_X/default/../../../ModbusTCP_X.X -x c -fdiagnostics-color=always -g -x c -c -mprocessor=32MZ2048EFH100 -ffunction-sections -fdata-sections -O1 -fno-common -Wall -mdfp=C:/Users/davec/.mchp_packs/Microchip/PIC32MZ-EF_DFP/1.4.168 -o CMakeFiles\\ModbusTCP_X_default_default_XC32_compile.dir\\C_\\Users\\davec\\GIT\\ModbusTCP_X\\ModbusTCP_X.X\\ModbusTCP.c.o -c C:\\Users\\davec\\GIT\\ModbusTCP_X\\ModbusTCP_X.X\\ModbusTCP.c",
+  "file": "C:/Users/davec/GIT/ModbusTCP_X/ModbusTCP_X.X/ModbusTCP.c",
+  "output": "C:/Users/davec/GIT/ModbusTCP_X/_build/ModbusTCP_X/default/CMakeFiles/ModbusTCP_X_default_default_XC32_compile.dir/C_/Users/davec/GIT/ModbusTCP_X/ModbusTCP_X.X/ModbusTCP.c.o"
+}
+]

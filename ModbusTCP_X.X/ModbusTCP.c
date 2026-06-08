@@ -71,9 +71,9 @@ ModbusTCP *pdu;
    pdu->mbap.UnitID = mbap[6];
    pdu->mbap.FC = mbap[7];
    
-   if(pdu->mbap.FC != O1 & pdu->mbap.FC != O2 & pdu->mbap.FC != O3 & 
-      pdu->mbap.FC != O4 & pdu->mbap.FC != O5 & pdu->mbap.FC != O6 &
-      pdu->mbap.FC != O15 & pdu->mbap.FC != O16)
+   if(pdu->mbap.FC != O1 && pdu->mbap.FC != O2 && pdu->mbap.FC != O3 && 
+      pdu->mbap.FC != O4 && pdu->mbap.FC != O5 && pdu->mbap.FC != O6 &&
+      pdu->mbap.FC != O15 && pdu->mbap.FC != O16)
    {
       pdu->error = IllegalFC;
    }
@@ -179,13 +179,17 @@ ModbusTCP *pdu = _pdu;
          len = 0;
          break;
       case O6:
-         regs.wr_reg[pdu->pdu.StartingAddr] = pdu->pdu.RegQuantity;
+         /* Guard: clamp write to within the wr_reg[100] array. */
+         if(pdu->pdu.StartingAddr < (uint16_t)(sizeof(regs.wr_reg)/sizeof(regs.wr_reg[0])))
+             regs.wr_reg[pdu->pdu.StartingAddr] = pdu->pdu.RegQuantity;
          len = 0;
          break;
       case O15:
          bit_startaddress = pdu->pdu.StartingAddr / 8;
          j = 0;
          for(i = bit_startaddress;i<(bit_startaddress+pdu->pdu.ByteCount);i++){
+             /* Guard: clamp write to within the wr_coils[200] array. */
+             if(i >= sizeof(regs.wr_coils)) break;
              regs.wr_coils[i] = *(resp+(j++));
          }
          len = 0;
@@ -314,22 +318,22 @@ int i = 0;
       case 45:temp = 0x3fffffffffff;break;
       case 46:temp = 0x7fffffffffff;break;
       case 47:temp = 0xffffffffffff;break;
-      case 48:temp = 0x1fffffffffff;break;
-      case 49:temp = 0x3fffffffffff;break;
-      case 50:temp = 0x7fffffffffff;break;
-      case 51:temp = 0xffffffffffff;break;
-      case 52:temp = 0x1fffffffffff;break;
-      case 53:temp = 0x3fffffffffff;break;
-      case 54:temp = 0x7fffffffffff;break;
-      case 55:temp = 0xffffffffffff;break;
-      case 56:temp = 0x1ffffffffffff;break;
-      case 57:temp = 0x3ffffffffffff;break;
-      case 58:temp = 0x7ffffffffffff;break;
-      case 59:temp = 0xfffffffffffff;break;
-      case 60:temp = 0x1fffffffffffff;break;
-      case 61:temp = 0x3fffffffffffff;break;
-      case 62:temp = 0x7fffffffffffff;break;
-      case 63:temp = 0xffffffffffffff;break;
+      case 48:temp = 0x1ffffffffffff;break;
+      case 49:temp = 0x3ffffffffffff;break;
+      case 50:temp = 0x7ffffffffffff;break;
+      case 51:temp = 0xfffffffffffff;break;
+      case 52:temp = 0x1fffffffffffff;break;
+      case 53:temp = 0x3fffffffffffff;break;
+      case 54:temp = 0x7fffffffffffff;break;
+      case 55:temp = 0xffffffffffffff;break;
+      case 56:temp = 0x1ffffffffffffffULL;break;
+      case 57:temp = 0x3ffffffffffffffULL;break;
+      case 58:temp = 0x7ffffffffffffffULL;break;
+      case 59:temp = 0xfffffffffffffffULL;break;
+      case 60:temp = 0x1fffffffffffffffULL;break;
+      case 61:temp = 0x3fffffffffffffffULL;break;
+      case 62:temp = 0x7fffffffffffffffULL;break;
+      case 63:temp = 0xffffffffffffffffULL;break;
     }
   }
   return temp;
@@ -595,7 +599,7 @@ uint16_t modbus_DataConditioning(uint8_t *mbArr,uint16_t data_len){
       
       if (pdu->error == MB_OK) {
       //FC to get the next number of bytes
-        if(pdu->mbap.FC == O15 | pdu->mbap.FC == O16){
+        if(pdu->mbap.FC == O15 || pdu->mbap.FC == O16){
             memcpy(prefix+len,mbArr+len,5);
             len += 5;
           /*for(i=len ; i < (len+5) ; i++) {
@@ -619,7 +623,7 @@ uint16_t modbus_DataConditioning(uint8_t *mbArr,uint16_t data_len){
      //  12/13 - 6/7 => 6 bytes
       if (pdu->error == MB_OK) {
           
-        if(pdu->mbap.FC != O5 & pdu->mbap.FC != O6){
+        if(pdu->mbap.FC != O5 && pdu->mbap.FC != O6){
             /* Guard: RegQuantity comes from the network — clamp before copying
              * into the fixed 256-byte reg[] stack buffer. Each register is
              * 2 bytes, and wr_reg[] is 100 entries (200 bytes), so cap at 128. */
@@ -634,7 +638,7 @@ uint16_t modbus_DataConditioning(uint8_t *mbArr,uint16_t data_len){
         len = get_Response(pdu,prefix);
         memcpy(mbArr,prefix,len);
         
-        if(pdu->mbap.FC == O1 | pdu->mbap.FC == O3 | pdu->mbap.FC == O4){
+        if(pdu->mbap.FC == O1 || pdu->mbap.FC == O3 || pdu->mbap.FC == O4){
              memcpy(mbArr+len,reg,last_len);
         }
    
@@ -643,7 +647,7 @@ uint16_t modbus_DataConditioning(uint8_t *mbArr,uint16_t data_len){
         prefix[4] = 0;
         prefix[5] = 3;      // Update to number of bytes in reply
         prefix[7] += 0x80;  // Error
-        prefix[8] = err;
+        prefix[8] = (uint8_t)pdu->error;  /* Modbus exception code: 1=IllegalFC, 2=IllegalADD, 3=IllegalDATA, 4=ServerFAIL */
         memcpy(mbArr,prefix, 9);
 
         return 9; // return to the library with the number of bytes to transmit
